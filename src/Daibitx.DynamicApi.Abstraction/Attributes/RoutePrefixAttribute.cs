@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Daibitx.DynamicApi.Attributes;
+namespace Daibitx.DynamicApi.Abstraction.Attributes;
 /// <summary>
 /// 路由前缀特性
 /// </summary>

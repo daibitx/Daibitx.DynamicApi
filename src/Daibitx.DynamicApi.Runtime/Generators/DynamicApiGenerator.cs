@@ -1,24 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Daibitx.DynamicApi.Models;
-using Daibitx.DynamicApi.Templates;
+
+using Daibitx.DynamicApi.Abstraction.Attributes;
+using Daibitx.DynamicApi.Runtime.Models;
+using Daibitx.DynamicApi.Runtime.Templates;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Daibitx.DynamicApi.Generators
+namespace Daibitx.DynamicApi.Runtime.Generators
 {
     [Generator]
     public class DynamicApiGenerator : ISourceGenerator
     {
-        private const string DynamicControllerInterfaceName = "Daibitx.DynamicApi.Interfaces.IDynamicController";
-        private const string RoutePrefixAttributeName = "Daibitx.DynamicApi.Attributes.RoutePrefixAttribute";
-        private const string ApiExplorerSettingsAttributeName = "Daibitx.DynamicApi.Attributes.ApiExplorerSettingsAttribute";
-        private const string HttpMethodAttributeName = "Daibitx.DynamicApi.Attributes.HttpMethodAttribute";
-        
+        private const string DynamicControllerInterfaceName = "Daibitx.DynamicApi.Abstraction.Interfaces.IDynamicController";
+        private const string RoutePrefixAttributeName = "Daibitx.DynamicApi.Abstraction.Attributes.RoutePrefixAttribute";
+        private const string ApiExplorerSettingsAttributeName = "Daibitx.DynamicApi.Abstraction.Attributes.ApiExplorerSettingsAttribute";
+        private const string HttpMethodAttributeName = "Daibitx.DynamicApi.Abstraction.Attributes.HttpMethodAttribute";
+
         public void Execute(GeneratorExecutionContext context)
         {
+            //if (!Debugger.IsAttached)
+            //{
+            //    Debugger.Launch();
+            //}
+
             if (!ShouldGenerate(context))
             {
                 return;
@@ -38,7 +47,7 @@ namespace Daibitx.DynamicApi.Generators
             var routePrefixAttributeSymbol = context.Compilation.GetTypeByMetadataName(RoutePrefixAttributeName);
             var apiExplorerSettingsAttributeSymbol = context.Compilation.GetTypeByMetadataName(ApiExplorerSettingsAttributeName);
             var httpMethodAttributeSymbol = context.Compilation.GetTypeByMetadataName(HttpMethodAttributeName);
-            
+
             foreach (var interfaceSyntax in receiver.CandidateInterfaces)
             {
                 var model = context.Compilation.GetSemanticModel(interfaceSyntax.SyntaxTree);
@@ -47,9 +56,9 @@ namespace Daibitx.DynamicApi.Generators
                 {
                     continue;
                 }
-                
-                var controllerCode = GenerateController(interfaceSymbol, routePrefixAttributeSymbol, apiExplorerSettingsAttributeSymbol, httpMethodAttributeSymbol, context);
-                
+
+                var controllerCode = GenerateController(symbol, routePrefixAttributeSymbol, apiExplorerSettingsAttributeSymbol, httpMethodAttributeSymbol, context);
+
                 // 将生成的代码添加到编译
                 if (!string.IsNullOrEmpty(controllerCode))
                 {
@@ -117,16 +126,11 @@ namespace Daibitx.DynamicApi.Generators
             var attribute = interfaceSymbol.GetAttributes().FirstOrDefault(ad => SymbolEqualityComparer.Default.Equals(ad.AttributeClass, apiExplorerSettingsAttributeSymbol));
             if (attribute != null)
             {
-                foreach (var namedArg in attribute.NamedArguments)
+                if (attribute.ConstructorArguments.Length >= 2)
                 {
-                    if (namedArg.Key == "IgnoreApi" && namedArg.Value.Value is bool ignoreApi)
-                    {
-                        settings.IgnoreApi = ignoreApi;
-                    }
-                    else if (namedArg.Key == "GroupName" && namedArg.Value.Value is string groupName)
-                    {
-                        settings.GroupName = groupName;
-                    }
+                    settings.IgnoreApi = attribute.ConstructorArguments[0].Value is bool ignoreApi ? ignoreApi : false;
+
+                    settings.GroupName = attribute.ConstructorArguments[1].Value?.ToString() ?? string.Empty;
                 }
             }
             return settings;
@@ -140,25 +144,27 @@ namespace Daibitx.DynamicApi.Generators
                 {
                     var attribute = methodSymbol.GetAttributes().FirstOrDefault(ad => SymbolEqualityComparer.Default.Equals(ad.AttributeClass, httpMethodAttributeSymbol));
                     string httpMethod;
-                    if (attribute != null && attribute.ConstructorArguments.Length > 0 && attribute.ConstructorArguments[0].Value is Attributes.HttpMethod method)
+                    if (attribute != null && attribute.ConstructorArguments.Length > 0)
                     {
-                        httpMethod = HttpMethodResolver.Resolve(method);
+                        var arg = attribute.ConstructorArguments[0];
+                        var enumString = arg.Value?.ToString();
+                        httpMethod = HttpMethodResolver.ResolveFromEnumValue(enumString);
                     }
                     else
                     {
                         httpMethod = HttpMethodResolver.Resolve(methodSymbol.Name);
                     }
-                    
+
                     var methodInfo = new MethodInfo
                     {
                         Name = methodSymbol.Name,
                         ReturnType = methodSymbol.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                         HttpMethod = httpMethod
                     };
-                    
+
                     // 生成参数信息
                     methodInfo.Parameters = GenerateParameters(methodSymbol, httpMethod);
-                    
+
                     methods.Add(methodInfo);
                 }
             }
@@ -168,7 +174,7 @@ namespace Daibitx.DynamicApi.Generators
         private List<ParameterInfo> GenerateParameters(IMethodSymbol methodSymbol, string httpMethod)
         {
             var parameters = new List<ParameterInfo>();
-            
+
             foreach (var param in methodSymbol.Parameters)
             {
                 var paramInfo = new ParameterInfo
@@ -179,10 +185,10 @@ namespace Daibitx.DynamicApi.Generators
                     IsOptional = param.IsOptional,
                     DefaultValue = ParameterBindingResolver.GetDefaultValue(param)
                 };
-                
+
                 parameters.Add(paramInfo);
             }
-            
+
             return parameters;
         }
         public void Initialize(GeneratorInitializationContext context)
@@ -198,5 +204,6 @@ namespace Daibitx.DynamicApi.Generators
             else
                 return true;
         }
+
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 
-namespace Daibitx.DynamicApi.Generators
+using Daibitx.DynamicApi.Abstraction.Attributes;
+
+namespace Daibitx.DynamicApi.Runtime.Generators
 {
     /// <summary>
     /// HTTP 方法推导逻辑
@@ -52,29 +54,22 @@ namespace Daibitx.DynamicApi.Generators
             return "HttpPost";
         }
 
-        public static string Resolve(Daibitx.DynamicApi.Attributes.HttpMethod httpMethod)
+        public static string ResolveFromEnumValue(string enumValue)
         {
-            switch (httpMethod)
+            if (string.IsNullOrWhiteSpace(enumValue))
+                return "HttpPost";
+            return enumValue switch
             {
-                case Daibitx.DynamicApi.Attributes.HttpMethod.Get:
-                    return "HttpGet";
-                case Daibitx.DynamicApi.Attributes.HttpMethod.Post:
-                    return "HttpPost";
-                case Daibitx.DynamicApi.Attributes.HttpMethod.Put:
-                    return "HttpPut";
-                case Daibitx.DynamicApi.Attributes.HttpMethod.Delete:
-                    return "HttpDelete";
-                case Daibitx.DynamicApi.Attributes.HttpMethod.Patch:
-                    return "HttpPatch";
-                case Daibitx.DynamicApi.Attributes.HttpMethod.Head:
-                    return "HttpHead";
-                case Daibitx.DynamicApi.Attributes.HttpMethod.Options:
-                    return "HttpOptions";
-                case Daibitx.DynamicApi.Attributes.HttpMethod.Trace:
-                    return "HttpTrace";
-                default:
-                    return "HttpPost";
-            }
+                "0" => "HttpGet",
+                "1" => "HttpPost",
+                "2" => "HttpPut",
+                "3" => "HttpDelete",
+                "4" => "HttpPatch",
+                "5" => "HttpHead",
+                "6" => "HttpOptions",
+                "7" => "HttpTrace",
+                _ => "HttpPost" // 默认
+            };
         }
         private static bool MatchPrefix(string methodName, string[] prefixes)
         {

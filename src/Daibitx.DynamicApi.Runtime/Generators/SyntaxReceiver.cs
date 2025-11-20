@@ -3,7 +3,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Daibitx.DynamicApi.Generators
+namespace Daibitx.DynamicApi.Runtime.Generators
 {
     /// <summary>
     /// 列出所有的接口声明

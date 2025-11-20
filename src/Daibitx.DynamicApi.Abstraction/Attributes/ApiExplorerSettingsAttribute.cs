@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Daibitx.DynamicApi.Attributes
+namespace Daibitx.DynamicApi.Abstraction.Attributes
 {
     /// <summary>
     /// API 文档生成行为
@@ -11,12 +11,12 @@ namespace Daibitx.DynamicApi.Attributes
         /// <summary>
         /// 是否在 API 文档中隐藏
         /// </summary>
-        public bool IgnoreApi { get; set; }
+        public bool IgnoreApi { get; }
 
         /// <summary>
         /// API 分组名称
         /// </summary>
-        public string GroupName { get; set; }
+        public string GroupName { get; }
 
         public ApiExplorerSettingsAttribute(bool ignoreApi, string groupName)
         {

@@ -1,29 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
-        <DevelopmentDependency>true</DevelopmentDependency>
-        <IsRoslynComponent>true</IsRoslynComponent>
-        <PackageId>Daibitx.DynamicApi</PackageId>
-        <Version>1.0.0</Version>
-        <Authors>Daibitx</Authors>
-        <Description>编译期动态生成 ASP.NET Core Controller 的 Source Generator</Description>
-        <PackageTags>sourcegenerator;aspnetcore;webapi</PackageTags>
-        <LangVersion>latest</LangVersion>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/daibitx/DynamicApi</PackageProjectUrl>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Daibitx.DynamicApi.Abstraction\Daibitx.DynamicApi.Abstraction.csproj" />
+      <ProjectReference Include="..\Daibitx.DynamicApi.Runtime\Daibitx.DynamicApi.Runtime.csproj"
+                        PrivateAssets="all"
+                        OutputItemType="Analyzer" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.XUnit" Version="1.1.1" PrivateAssets="all" Condition="'$(Configuration)' == 'Debug'" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <!-- 将生成器打包到 analyzers 目录 -->
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-    </ItemGroup>
 </Project>
