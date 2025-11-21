@@ -5,12 +5,9 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Daibitx.AspNetCore.DynamicApi.Abstraction\Daibitx.AspNetCore.DynamicApi.Abstraction.csproj" />
-	  <ProjectReference Include="..\..\src\Daibitx.AspNetCore.DynamicApi.Runtime\Daibitx.AspNetCore.DynamicApi.Runtime.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-
-  </ItemGroup>
+	  <PackageReference Include="Daibitx.AspNetCore.DynamicApi" Version="1.0.1" />
+	</ItemGroup>
 </Project>

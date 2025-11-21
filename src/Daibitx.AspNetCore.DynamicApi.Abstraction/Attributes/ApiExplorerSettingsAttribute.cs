@@ -9,12 +9,12 @@ namespace Daibitx.AspNetCore.DynamicApi.Abstraction.Attributes
     public sealed class ApiExplorerSettingsAttribute : Attribute
     {
         /// <summary>
-        /// 是否在 API 文档中隐藏
+        /// when set to true, the API will be ignored in the API documentation.
         /// </summary>
         public bool IgnoreApi { get; }
 
         /// <summary>
-        /// API 分组名称
+        /// get the group name for the API description.
         /// </summary>
         public string GroupName { get; }
 

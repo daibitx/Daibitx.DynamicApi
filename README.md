@@ -1,50 +1,48 @@
-一个基于 Roslyn 源代码生成器的 ASP.NET Core 动态 API 生成库，通过接口定义自动生成 Web API 控制器。
+English | [简体中文](README.zh-CN.md)
 
-## 项目简介
+## Project Overview
 
-Daibitx.AspNetCore.DynamicApi 是一个强大的 .NET 库，它使用 Roslyn 源代码生成器技术在编译时自动将接口转换为 ASP.NET Core Web API 控制器。这种方式提供了类型安全、编译时检查和优秀的开发体验。
+Automatically generates Web API controllers from interface definitions.
 
-## 核心特性
+## Key Features
 
-- 🚀 **编译时生成** - 使用 Roslyn 源代码生成器，在编译时生成控制器代码
-- 🔒 **类型安全** - 完全基于接口定义，提供编译时类型检查
-- 🎯 **智能路由** - 自动根据方法名和参数生成路由
-- 📦 **参数绑定** - 智能识别参数来源（路径、查询、请求体）
-- 📚 **API 文档支持** - 支持 Swagger/OpenAPI 集成
-- ⚡ **高性能** - 零运行时反射开销
-- 🔧 **灵活配置** - 支持自定义路由前缀和 API 文档设置
+- 🚀 **Compile-time generation** – Uses Roslyn source generators to generate controller code during compilation
+- 🔒 **Type-safe** – Fully based on interface definitions with compile-time type checking
+- 🎯 **Smart routing** – Automatically generates routes based on method names and parameters
+- 📦 **Parameter binding** – Intelligently detects parameter sources (path, query, body)
+- 📚 **API documentation support** – Fully compatible with Swagger/OpenAPI
+- ⚡ **High performance** – No runtime reflection overhead
+- 🔧 **Flexible configuration** – Supports custom route prefixes and API documentation metadata
 
-## 项目结构
+## Project Structure
 
-```txt
+```
 src/
-├── Daibitx.AspNetCore.DynamicApi.sln          # 解决方案文件
-├── Daibitx.AspNetCore.DynamicApi/             # 主包
-├── Daibitx.AspNetCore.DynamicApi.Abstraction/ # 抽象层（接口和特性）
-└── Daibitx.AspNetCore.DynamicApi.Runtime/     # 源代码生成器
+├── Daibitx.AspNetCore.DynamicApi.sln          # Solution file
+├── Daibitx.AspNetCore.DynamicApi/             # Main package
+├── Daibitx.AspNetCore.DynamicApi.Abstraction/ # Abstractions (interfaces & attributes)
+└── Daibitx.AspNetCore.DynamicApi.Runtime/     # Source generator implementation
 demo/
-└── WebApplication1/                           # 示例应用
+└── WebApplication1/                           # Demo application
 test/
-└── Daibitx.AspNetCore.DynamicApi.Tests/       # 单元测试
+└── Daibitx.AspNetCore.DynamicApi.Tests/       # Unit tests
 ```
 
+## Installation
 
+Install via NuGet:
 
-## 安装
-
-通过 NuGet 包管理器安装：
-
-```bash
+```
 dotnet add package Daibitx.AspNetCore.DynamicApi
 ```
 
+------
 
+## Quick Start
 
-## 快速开始
+### 1. Define a Service Interface
 
-### 1. 定义服务接口
-
-```csharp
+```
 using Daibitx.AspNetCore.DynamicApi.Abstraction.Attributes;
 using Daibitx.AspNetCore.DynamicApi.Abstraction.Interfaces;
 
@@ -54,94 +52,81 @@ namespace DemoApp.Services;
 [ApiExplorerSettings(false, "Sample Service")]
 public interface ISampleService : IDynamicController
 {
-    // GET 示例，无参数
+    // GET example, no parameters
     Task<string> GetWelcomeMessage();
 
-    // GET 示例，URL 参数 + Query 参数
+    // GET example with route and query parameters
     [HttpMethod(DynamicMethod.Get)]
     Task<string> GetItemAsync(int id, string keyword);
 
-    // POST 示例，Body 参数
+    // POST example with body parameter
     [HttpMethod(DynamicMethod.Post)]
     Task<bool> CreateItemAsync(SampleCreateModel model);
 
-    // PUT 示例，路径参数 + Body
+    // PUT example with route parameter + body
     [HttpMethod(DynamicMethod.Put)]
     Task<bool> UpdateItemAsync(int id, SampleUpdateModel model);
 
-    // DELETE 示例，带可选参数
+    // DELETE example with optional parameter
     [HttpMethod(DynamicMethod.Delete)]
     Task<bool> DeleteItemAsync(int id, bool force = false);
 
-    // 获取列表的示例
+    // Example of list retrieval
     [HttpMethod(DynamicMethod.Get)]
     Task<IEnumerable<SampleListItem>> GetListAsync(int pageIndex = 1, int pageSize = 10);
 }
 ```
 
+### 2. Implement the Interface
 
-
-### 2. 实现接口
-
-```csharp
+```
 public class SampleService : ISampleService
 {
     public Task<string> GetWelcomeMessage()
-    {
-        return Task.FromResult("Welcome to Dynamic API!");
-    }
+        => Task.FromResult("Welcome to Dynamic API!");
 
     public Task<string> GetItemAsync(int id, string keyword)
-    {
-        return Task.FromResult($"Item {id} with keyword: {keyword}");
-    }
+        => Task.FromResult($"Item {id} with keyword: {keyword}");
 
     public Task<bool> CreateItemAsync(SampleCreateModel model)
-    {
-        // 实现创建逻辑
-        return Task.FromResult(true);
-    }
+        => Task.FromResult(true);
 
-    // 其他方法实现...
+    // Other method implementations...
 }
 ```
 
+### 3. Register the Service
 
+In `Program.cs`:
 
-### 3. 注册服务
-
-在 `Program.cs` 中注册服务：
-
-```csharp
+```
 var builder = WebApplication.CreateBuilder(args);
 
-// 注册服务
+// Register service
 builder.Services.AddScoped<ISampleService, SampleService>();
 
 var app = builder.Build();
 app.Run();
 ```
 
+### 4. Automatically Generated APIs
 
+After compilation, the following endpoints will be generated:
 
-### 4. 自动生成的 API
+- `GET /api/sample/getwelcomemessage` – Get welcome message
+- `GET /api/sample/getitemasync/{id}` – Get specific item
+- `POST /api/sample/createitemasync` – Create an item
+- `PUT /api/sample/updateitemasync/{id}` – Update an item
+- `DELETE /api/sample/deleteitemasync/{id}` – Delete an item
+- `GET /api/sample/getlistasync` – Fetch a list
 
-编译后，将自动生成以下 API 端点：
+------
 
-- `GET /api/sample/getwelcomemessage` - 获取欢迎消息
-- `GET /api/sample/getitemasync/{id}` - 获取指定项
-- `POST /api/sample/createitemasync` - 创建新项
-- `PUT /api/sample/updateitemasync/{id}` - 更新项
-- `DELETE /api/sample/deleteitemasync/{id}` - 删除项
-- `GET /api/sample/getlistasync` - 获取列表
+## Advanced Features
 
-## 高级特性
+### Custom Route Configuration
 
-### 路由配置
-
-使用 `[RoutePrefix]` 特性自定义路由前缀：
-
-```csharp
+```
 [RoutePrefix("/api/v1/users")]
 public interface IUserService : IDynamicController
 {
@@ -149,11 +134,9 @@ public interface IUserService : IDynamicController
 }
 ```
 
-### API 文档设置
+### API Documentation Metadata
 
-使用 `[ApiExplorerSettings]` 控制 API 文档生成：
-
-```csharp
+```
 [ApiExplorerSettings(false, "User Management")]
 public interface IUserService : IDynamicController
 {
@@ -161,86 +144,54 @@ public interface IUserService : IDynamicController
 }
 ```
 
-### HTTP 方法指定
+### HTTP Method Specification
 
-使用 `[HttpMethod]` 特性显式指定 HTTP 方法：
-
-```csharp
+```
 public interface IOrderService : IDynamicController
 {
     [HttpMethod(DynamicMethod.Post)]
     Task<bool> CreateOrderAsync(OrderModel order);
-    
+
     [HttpMethod(DynamicMethod.Put)]
     Task<bool> UpdateOrderAsync(int orderId, OrderModel order);
-    
+
     [HttpMethod(DynamicMethod.Delete)]
     Task<bool> CancelOrderAsync(int orderId);
 }
 ```
 
-### 参数绑定规则
+### Parameter Binding Rules
 
-系统自动识别参数绑定源：
+The system automatically determines parameter binding sources:
 
-- **路径参数**：第一个参数（通常是 ID）
-- **查询参数**：简单类型参数（string, int, bool 等）
-- **请求体**：复杂对象参数
-- **可选参数**：支持默认值
+- **Path parameters** – First parameter (commonly an ID)
+- **Query parameters** – Simple types (`string`, `int`, `bool`, etc.)
+- **Body parameters** – Complex object types
+- **Optional parameters** – Supported with default values
 
-## 技术架构
+------
 
-### 核心组件
+## Technical Architecture
+
+### Core Components
 
 1. **Daibitx.AspNetCore.DynamicApi.Abstraction**
-   - 定义核心接口 `IDynamicController`
-   - 提供配置特性（`RoutePrefixAttribute`, `HttpMethodAttribute`, `ApiExplorerSettingsAttribute`）
-   - 目标框架：.NET Standard 2.0
+   - Defines the core interface `IDynamicController`
+   - Provides configuration attributes (`RoutePrefixAttribute`, `HttpMethodAttribute`, etc.)
+   - Targets **.NET Standard 2.0**
 2. **Daibitx.AspNetCore.DynamicApi.Runtime**
-   - Roslyn 源代码生成器实现
-   - 编译时分析接口定义
-   - 生成 ASP.NET Core 控制器代码
-   - 目标框架：.NET Standard 2.0
+   - Roslyn source generator implementation
+   - Analyzes interface definitions during compilation
+   - Generates ASP.NET Core controller code
+   - Targets **.NET Standard 2.0**
 3. **Daibitx.AspNetCore.DynamicApi**
-   - 主包，包含上述两个组件
-   - 提供完整的动态 API 生成功能
+   - Main package bundling the above components
+   - Provides full dynamic API generation capability
 
-### 生成流程
+### Generation Workflow
 
-1. **语法分析**：Roslyn 分析器扫描实现 `IDynamicController` 的接口
-2. **语义分析**：提取接口方法、参数、特性信息
-3. **代码生成**：使用模板生成控制器类
-4. **编译集成**：生成的代码作为编译的一部分
+1. **Syntax Analysis** – Roslyn inspects interfaces implementing `IDynamicController`
+2. **Semantic Analysis** – Extracts methods, parameters, and attribute metadata
+3. **Code Generation** – Templates generate controller classes
+4. **Compilation Integration** – Generated code becomes part of the final build
 
-## 开发环境
-
-- **.NET SDK**: .NET 6.0 或更高版本
-- **语言版本**: C# 最新版本
-- **IDE**: Visual Studio 2022 或 JetBrains Rider
-
-## 构建和测试
-
-### 构建项目
-
-```bash
-cd src
-dotnet build
-```
-
-
-
-### 运行测试
-
-```bash
-cd test/Daibitx.AspNetCore.DynamicApi.Tests
-dotnet test
-```
-
-
-
-### 运行示例
-
-```bash
-cd demo/WebApplication1
-dotnet run
-```

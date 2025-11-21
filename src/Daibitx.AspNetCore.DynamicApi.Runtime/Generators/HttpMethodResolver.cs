@@ -17,7 +17,7 @@ namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
         {
             if (string.IsNullOrWhiteSpace(methodName))
             {
-                return "HttpPost"; // 默认方法
+                return "HttpPost"; //Default method
             }
 
             var upperMethod = methodName;
@@ -47,8 +47,7 @@ namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
             {
                 return "HttpPatch";
             }
-
-            // 默认根据参数决定
+            //Default 
             return "HttpPost";
         }
 
@@ -66,7 +65,7 @@ namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
                 "5" => "HttpHead",
                 "6" => "HttpOptions",
                 "7" => "HttpTrace",
-                _ => "HttpPost" // 默认
+                _ => "HttpPost" //Defalut
             };
         }
         private static bool MatchPrefix(string methodName, string[] prefixes)

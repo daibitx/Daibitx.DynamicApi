@@ -13,7 +13,7 @@ using Xunit;
 namespace Daibitx.AspNetCore.DynamicApi.Tests;
 
 /// <summary>
-/// DynamicApiGenerator 集成测试
+/// DynamicApiGenerator Integration Tests
 /// </summary>
 public class DynamicApiGeneratorTests
 {
@@ -52,7 +52,7 @@ namespace TestNamespace
             MetadataReference.CreateFromFile(typeof(IDynamicController).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(RoutePrefixAttribute).Assembly.Location)
         };
-        
+
         var compilation = CSharpCompilation.Create(
             "TestAssembly",
             new[] { syntaxTree },
@@ -67,7 +67,7 @@ namespace TestNamespace
         // Assert
         var generatedTrees = outputCompilation.SyntaxTrees.Where(t => t.FilePath.Contains(".g.cs")).ToList();
         Assert.NotEmpty(generatedTrees);
-        
+
         var generatedCode = generatedTrees.First().ToString();
         Assert.Contains("public partial class UserServiceController", generatedCode);
         Assert.Contains("[Route(\"api/v1/users\")]", generatedCode);
@@ -86,7 +86,7 @@ namespace TestNamespace
             MetadataReference.CreateFromFile(typeof(IDynamicController).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(RoutePrefixAttribute).Assembly.Location)
         };
-        
+
         var compilation = CSharpCompilation.Create(
             "TestAssembly",
             new[] { syntaxTree },
@@ -101,7 +101,7 @@ namespace TestNamespace
         // Assert
         var generatedTrees = outputCompilation.SyntaxTrees.Where(t => t.FilePath.Contains(".g.cs")).ToList();
         var generatedCode = generatedTrees.First().ToString();
-        
+
         Assert.Contains("[HttpGet]", generatedCode);
         Assert.Contains("[HttpPost]", generatedCode);
         Assert.Contains("[HttpPut]", generatedCode);
@@ -120,7 +120,7 @@ namespace TestNamespace
             MetadataReference.CreateFromFile(typeof(IDynamicController).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(RoutePrefixAttribute).Assembly.Location)
         };
-        
+
         var compilation = CSharpCompilation.Create(
             "TestAssembly",
             new[] { syntaxTree },
@@ -135,7 +135,7 @@ namespace TestNamespace
         // Assert
         var generatedTrees = outputCompilation.SyntaxTrees.Where(t => t.FilePath.Contains(".g.cs")).ToList();
         var generatedCode = generatedTrees.First().ToString();
-        
+
         // 验证参数绑定
         Assert.Contains("[FromRoute] long id", generatedCode);
         Assert.Contains("[FromQuery] string name", generatedCode);
@@ -158,7 +158,7 @@ namespace TestNamespace
         Task GetProductAsync(long id);
     }
 }";
-        
+
         var syntaxTree = CSharpSyntaxTree.ParseText(codeWithoutPrefix);
         var references = new[]
         {
@@ -166,7 +166,7 @@ namespace TestNamespace
             MetadataReference.CreateFromFile(typeof(Task).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(IDynamicController).Assembly.Location)
         };
-        
+
         var compilation = CSharpCompilation.Create(
             "TestAssembly",
             new[] { syntaxTree },
@@ -181,7 +181,7 @@ namespace TestNamespace
         // Assert
         var generatedTrees = outputCompilation.SyntaxTrees.Where(t => t.FilePath.Contains(".g.cs")).ToList();
         Assert.NotEmpty(generatedTrees);
-        
+
         var generatedCode = generatedTrees.First().ToString();
         Assert.Contains("[Route(\"/api/iproductservice\")]", generatedCode);
     }
@@ -198,13 +198,13 @@ namespace TestNamespace
         void DoSomething();
     }
 }";
-        
+
         var syntaxTree = CSharpSyntaxTree.ParseText(code);
         var references = new[]
         {
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
         };
-        
+
         var compilation = CSharpCompilation.Create(
             "TestAssembly",
             new[] { syntaxTree },

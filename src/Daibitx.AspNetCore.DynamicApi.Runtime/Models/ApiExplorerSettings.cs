@@ -2,12 +2,12 @@
 public class ApiExplorerSettings
 {
     /// <summary>
-    /// 是否在 API 文档中隐藏
+    /// When set to true, the API will be ignored in the API documentation.
     /// </summary>
     public bool IgnoreApi { get; set; }
 
     /// <summary>
-    /// API 分组名称
+    /// Get or set the group name for the API description.
     /// </summary>
     public string GroupName { get; set; }
 }

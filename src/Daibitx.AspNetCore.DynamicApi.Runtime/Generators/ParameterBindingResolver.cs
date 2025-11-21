@@ -5,59 +5,51 @@ using Microsoft.CodeAnalysis;
 namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
 {
     /// <summary>
-    /// 参数绑定解析器 - 自动推导参数的绑定源
+    /// Parameter Binding Resolver - Automatically deduces the binding source of parameters
     /// </summary>
     public static class ParameterBindingResolver
     {
         /// <summary>
-        /// 解析参数的绑定源
+        /// Resolves the binding source of a parameters
         /// </summary>
         public static string Resolve(IParameterSymbol param, string httpMethod)
         {
             var type = param.Type as INamedTypeSymbol;
 
-            // 规则 1: IFormFile → FromForm
             if (IsFormFile(type))
             {
                 return "[FromForm]";
             }
 
-            // 规则 2: 复杂类型（DTO）→ FromBody
             if (!IsSimpleType(type))
             {
                 return "[FromBody]";
             }
 
-            // 规则 3: 参数名含 id/key/code → FromRoute
             if (IsRouteParameter(param.Name))
             {
                 return "[FromRoute]";
             }
 
-            // 规则 4: GET/DELETE → FromQuery
             if (httpMethod is "HttpGet" or "HttpDelete")
             {
                 return "[FromQuery]";
             }
 
-            // 规则 5: 默认 FromQuery
             return "[FromQuery]";
         }
 
         /// <summary>
-        /// 判断是否为简单类型（值类型、string、decimal等）
+        /// Judges whether the type is a simple type (value type, string, decimal, etc.)
         /// </summary>
         private static bool IsSimpleType(INamedTypeSymbol type)
         {
             if (type == null) return false;
 
-            // 值类型
             if (type.IsValueType) return true;
 
-            // string
             if (type.SpecialType == SpecialType.System_String) return true;
 
-            // 其他特殊类型
             switch (type.SpecialType)
             {
                 case SpecialType.System_Object:
@@ -70,7 +62,7 @@ namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
         }
 
         /// <summary>
-        /// 判断是否为表单文件类型
+        /// Judges whether the type is a form file type
         /// </summary>
         private static bool IsFormFile(INamedTypeSymbol type)
         {
@@ -83,7 +75,7 @@ namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
         }
 
         /// <summary>
-        /// 判断是否为路由参数
+        /// Judges whether the parameter is a route parameter
         /// </summary>
         private static bool IsRouteParameter(string paramName)
         {
@@ -96,7 +88,7 @@ namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
         }
 
         /// <summary>
-        /// 获取参数的默认值字符串表示
+        /// Aquire the default value string representation of a parameter
         /// </summary>
         public static string GetDefaultValue(IParameterSymbol param)
         {

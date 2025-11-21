@@ -4,7 +4,7 @@ using Xunit;
 namespace Daibitx.AspNetCore.DynamicApi.Tests;
 
 /// <summary>
-/// HttpMethodResolver 单元测试
+/// HttpMethodResolver Unit Tests
 /// </summary>
 public class HttpMethodResolverTests
 {

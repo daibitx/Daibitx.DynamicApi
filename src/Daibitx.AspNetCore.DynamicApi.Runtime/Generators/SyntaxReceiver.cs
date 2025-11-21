@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
 {
     /// <summary>
-    /// 列出所有的接口声明
+    /// Lists all interface declarations
     /// </summary>
     public class SyntaxReceiver : ISyntaxReceiver
     {

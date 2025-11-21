@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-
-using Daibitx.AspNetCore.DynamicApi.Runtime.Models;
+﻿using Daibitx.AspNetCore.DynamicApi.Runtime.Models;
 using Daibitx.AspNetCore.DynamicApi.Runtime.Templates;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
 {
@@ -53,7 +50,6 @@ namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
 
                 var controllerCode = GenerateController(symbol, routePrefixAttributeSymbol, apiExplorerSettingsAttributeSymbol, httpMethodAttributeSymbol, context);
 
-                // 将生成的代码添加到编译
                 if (!string.IsNullOrEmpty(controllerCode))
                 {
                     var controllerName = $"{symbol.Name}Controller".TrimStart('I', 'i');
@@ -156,7 +152,7 @@ namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
                         HttpMethod = httpMethod
                     };
 
-                    // 生成参数信息
+                    // Generate parameters
                     methodInfo.Parameters = GenerateParameters(methodSymbol, httpMethod);
 
                     methods.Add(methodInfo);

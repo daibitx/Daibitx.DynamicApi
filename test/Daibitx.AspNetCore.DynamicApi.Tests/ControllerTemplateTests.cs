@@ -5,7 +5,7 @@ using Xunit;
 namespace Daibitx.AspNetCore.DynamicApi.Tests;
 
 /// <summary>
-/// ControllerTemplate 单元测试
+/// ControllerTemplate UnitTest
 /// </summary>
 public class ControllerTemplateTests
 {
