@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Daibitx.DynamicApi.Abstraction.Attributes
+namespace Daibitx.AspNetCore.DynamicApi.Abstraction.Attributes
 {
     /// <summary>
     /// API 文档生成行为

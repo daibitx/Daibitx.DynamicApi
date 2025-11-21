@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Daibitx.DynamicApi.Abstraction.Attributes;
+namespace Daibitx.AspNetCore.DynamicApi.Abstraction.Attributes;
 /// <summary>
 /// 路由前缀特性
 /// </summary>

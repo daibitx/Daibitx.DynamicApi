@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Text;
 
-using Daibitx.DynamicApi.Runtime.Models;
+using Daibitx.AspNetCore.DynamicApi.Runtime.Models;
 
-namespace Daibitx.DynamicApi.Runtime.Templates
+namespace Daibitx.AspNetCore.DynamicApi.Runtime.Templates
 {
     /// <summary>
     /// Controller 代码模板
@@ -19,6 +19,7 @@ namespace Daibitx.DynamicApi.Runtime.Templates
             ApiExplorerSettings apiExplorerSettings,
             List<MethodInfo> methods)
         {
+            var serviceName = interfaceName.ToLower();
             var sb = new StringBuilder();
 
             // 文件头
@@ -39,37 +40,42 @@ namespace Daibitx.DynamicApi.Runtime.Templates
             // Controller 特性
             sb.AppendLine($"    [ApiController]");
 
-            if (!string.IsNullOrEmpty(apiExplorerSettings.GroupName))
+            if (!string.IsNullOrEmpty(apiExplorerSettings.GroupName) || apiExplorerSettings.IgnoreApi)
             {
-                sb.AppendLine($"    [ApiExplorerSettings(GroupName = \"{apiExplorerSettings.GroupName}\")]");
+                var props = new List<string>();
+
+                if (apiExplorerSettings.IgnoreApi)
+                    props.Add("IgnoreApi = true");
+
+                if (!string.IsNullOrEmpty(apiExplorerSettings.GroupName))
+                    props.Add($"GroupName = \"{apiExplorerSettings.GroupName}\"");
+
+                if (props.Any())
+                    sb.AppendLine($"    [ApiExplorerSettings({string.Join(", ", props)})]");
             }
 
-            if (apiExplorerSettings.IgnoreApi)
-            {
-                sb.AppendLine($"    [ApiExplorerSettings(IgnoreApi = true)]");
-            }
 
             sb.AppendLine($"    [Route(\"{routePrefix}\")]");
 
             // Controller 类声明
-            sb.AppendLine($"    public partial class {controllerName} : ControllerBase");
+            sb.AppendLine($"    public class {controllerName} : ControllerBase");
             sb.AppendLine("    {");
 
             // 字段
-            sb.AppendLine($"        private readonly {interfaceName} _service;");
+            sb.AppendLine($"        private readonly {interfaceName} {serviceName};");
             sb.AppendLine();
 
             // 构造函数
             sb.AppendLine($"        public {controllerName}({interfaceName} service)");
             sb.AppendLine("        {");
-            sb.AppendLine("            _service = service ?? throw new ArgumentNullException(nameof(service));");
+            sb.AppendLine($"           {serviceName} = service ?? throw new ArgumentNullException(nameof(service));");
             sb.AppendLine("        }");
             sb.AppendLine();
 
             // 方法
             foreach (var method in methods)
             {
-                GenerateMethod(sb, method);
+                GenerateMethod(sb, method, serviceName);
             }
 
             // 类结束
@@ -82,7 +88,7 @@ namespace Daibitx.DynamicApi.Runtime.Templates
 
             return sb.ToString();
         }
-        private void GenerateMethod(StringBuilder sb, MethodInfo method)
+        private void GenerateMethod(StringBuilder sb, MethodInfo method, string serviceName)
         {
             // 方法注释
             sb.AppendLine("        /// <summary>");
@@ -131,7 +137,16 @@ namespace Daibitx.DynamicApi.Runtime.Templates
 
             // 调用服务方法
             var args = string.Join(", ", method.Parameters.Select(p => p.Name));
-            sb.AppendLine($"            return await _service.{method.Name}({args});");
+           
+            var isVoidTask = IsVoidTaskReturnType(method.ReturnType);
+            if (isVoidTask)
+            {
+                sb.AppendLine($"            await {serviceName}.{method.Name}({args});");
+            }
+            else
+            {
+                sb.AppendLine($"            return await {serviceName}.{method.Name}({args});");
+            }
 
             sb.AppendLine("        }");
             sb.AppendLine();
@@ -167,6 +182,36 @@ namespace Daibitx.DynamicApi.Runtime.Templates
                 return true;
 
             if (lower == "valuetask" || lower.StartsWith("valuetask<"))
+                return true;
+
+            return false;
+        }
+
+        private bool IsVoidTaskReturnType(string returnType)
+        {
+            if (string.IsNullOrWhiteSpace(returnType))
+                return false;
+
+            var normalized = returnType.Trim();
+
+            if (normalized.StartsWith("global::"))
+                normalized = normalized.Substring("global::".Length);
+
+            normalized = normalized.Replace(" ", "");
+
+            var lower = normalized.ToLowerInvariant();
+
+            // 检查是否为非泛型的 Task 或 ValueTask
+            if (lower == "system.threading.tasks.task")
+                return true;
+
+            if (lower == "system.threading.tasks.valuetask")
+                return true;
+
+            if (lower == "task")
+                return true;
+
+            if (lower == "valuetask")
                 return true;
 
             return false;

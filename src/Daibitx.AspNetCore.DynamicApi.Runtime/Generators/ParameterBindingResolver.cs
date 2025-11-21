@@ -2,7 +2,7 @@ using System;
 
 using Microsoft.CodeAnalysis;
 
-namespace Daibitx.DynamicApi.Runtime.Generators
+namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
 {
     /// <summary>
     /// 参数绑定解析器 - 自动推导参数的绑定源

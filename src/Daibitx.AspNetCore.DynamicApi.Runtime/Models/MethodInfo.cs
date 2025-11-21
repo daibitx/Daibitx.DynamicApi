@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Daibitx.DynamicApi.Runtime.Models
+namespace Daibitx.AspNetCore.DynamicApi.Runtime.Models
 {
     public class MethodInfo
     {

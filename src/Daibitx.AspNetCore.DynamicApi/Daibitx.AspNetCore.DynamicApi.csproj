@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Daibitx.AspNetCore.DynamicApi.Abstraction\Daibitx.AspNetCore.DynamicApi.Abstraction.csproj" />
+        <ProjectReference Include="..\Daibitx.AspNetCore.DynamicApi.Runtime\Daibitx.AspNetCore.DynamicApi.Runtime.csproj" 
+                                OutputItemType="Analyzer" 
+                                ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+</Project>

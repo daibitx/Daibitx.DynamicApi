@@ -1,4 +1,4 @@
-﻿namespace Daibitx.DynamicApi.Runtime.Models;
+﻿namespace Daibitx.AspNetCore.DynamicApi.Runtime.Models;
 public class ApiExplorerSettings
 {
     /// <summary>

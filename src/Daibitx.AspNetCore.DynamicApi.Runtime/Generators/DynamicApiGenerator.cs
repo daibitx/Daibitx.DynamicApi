@@ -4,30 +4,24 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-using Daibitx.DynamicApi.Abstraction.Attributes;
-using Daibitx.DynamicApi.Runtime.Models;
-using Daibitx.DynamicApi.Runtime.Templates;
+using Daibitx.AspNetCore.DynamicApi.Runtime.Models;
+using Daibitx.AspNetCore.DynamicApi.Runtime.Templates;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Daibitx.DynamicApi.Runtime.Generators
+namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
 {
     [Generator]
     public class DynamicApiGenerator : ISourceGenerator
     {
-        private const string DynamicControllerInterfaceName = "Daibitx.DynamicApi.Abstraction.Interfaces.IDynamicController";
-        private const string RoutePrefixAttributeName = "Daibitx.DynamicApi.Abstraction.Attributes.RoutePrefixAttribute";
-        private const string ApiExplorerSettingsAttributeName = "Daibitx.DynamicApi.Abstraction.Attributes.ApiExplorerSettingsAttribute";
-        private const string HttpMethodAttributeName = "Daibitx.DynamicApi.Abstraction.Attributes.HttpMethodAttribute";
+        private const string DynamicControllerInterfaceName = "Daibitx.AspNetCore.DynamicApi.Abstraction.Interfaces.IDynamicController";
+        private const string RoutePrefixAttributeName = "Daibitx.AspNetCore.DynamicApi.Abstraction.Attributes.RoutePrefixAttribute";
+        private const string ApiExplorerSettingsAttributeName = "Daibitx.AspNetCore.DynamicApi.Abstraction.Attributes.ApiExplorerSettingsAttribute";
+        private const string HttpMethodAttributeName = "Daibitx.AspNetCore.DynamicApi.Abstraction.Attributes.HttpMethodAttribute";
 
         public void Execute(GeneratorExecutionContext context)
         {
-            //if (!Debugger.IsAttached)
-            //{
-            //    Debugger.Launch();
-            //}
-
             if (!ShouldGenerate(context))
             {
                 return;
@@ -62,7 +56,7 @@ namespace Daibitx.DynamicApi.Runtime.Generators
                 // 将生成的代码添加到编译
                 if (!string.IsNullOrEmpty(controllerCode))
                 {
-                    var controllerName = $"{interfaceSymbol.Name}Controller".TrimStart('I', 'i');
+                    var controllerName = $"{symbol.Name}Controller".TrimStart('I', 'i');
                     context.AddSource($"{controllerName}.g.cs", SourceText.From(controllerCode, Encoding.UTF8));
                 }
             }

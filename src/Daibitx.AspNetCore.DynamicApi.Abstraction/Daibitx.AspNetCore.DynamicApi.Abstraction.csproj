@@ -3,6 +3,6 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <IncludeBuildOutput>true</IncludeBuildOutput>
         <LangVersion>latest</LangVersion>
-        <PackageId>Daibitx.DynamicApi.Abstraction</PackageId>
+        <PackageId>Daibitx.AspNetCore.DynamicApi.Abstraction</PackageId>
     </PropertyGroup>
 </Project>

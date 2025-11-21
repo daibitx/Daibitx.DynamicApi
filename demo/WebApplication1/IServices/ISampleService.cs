@@ -1,7 +1,7 @@
-﻿using Daibitx.DynamicApi.Abstraction.Attributes;
-using Daibitx.DynamicApi.Abstraction.Interfaces;
+﻿using Daibitx.AspNetCore.DynamicApi.Abstraction.Attributes;
+using Daibitx.AspNetCore.DynamicApi.Abstraction.Interfaces;
 
-namespace DemoApp.Services;
+namespace WebApplication1.IServices;
 
 /// <summary>
 /// 用于测试 DynamicApiGenerator 的示例接口

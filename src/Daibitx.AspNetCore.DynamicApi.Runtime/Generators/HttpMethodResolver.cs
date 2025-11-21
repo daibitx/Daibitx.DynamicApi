@@ -1,8 +1,6 @@
 ﻿using System;
 
-using Daibitx.DynamicApi.Abstraction.Attributes;
-
-namespace Daibitx.DynamicApi.Runtime.Generators
+namespace Daibitx.AspNetCore.DynamicApi.Runtime.Generators
 {
     /// <summary>
     /// HTTP 方法推导逻辑
